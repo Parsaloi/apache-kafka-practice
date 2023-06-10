@@ -17,8 +17,4 @@ public class Messages {
     }
 }
 
-## The code
-
-## The Build
-
-## The Run
+//some code
