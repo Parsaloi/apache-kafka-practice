@@ -12,11 +12,13 @@ import org.acme.kafka.model.Quote;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
+import io.smallrye.mutiny.Multi;
+
 @Path("/quotes")
 public class QuoteResource {
-	
+	//Sending quotes
 	@Channel("quote-requests")
-	// Inject a Reactive Messaging Emitter to send messages to the quote-request channel
+	//Inject a Reactive Messaging Emitter to send messages to the quote-request channel
 	Emitter<String> quoteRequestEmitter;
 
 	/**
@@ -31,5 +33,17 @@ public class QuoteResource {
 		quoteRequestEmitter.send(uuid.toString());
 		// Return the same UUID to the client
 		return uuid.toString();
+	}
+	//Receiving quotes
+	@Channel("quotes")
+	Multi<Quote> quotes; //Injects the quotes channel using channel using the @Channel qualifier
+	
+	/**
+	 * Endpoint retrieving the 'quotes' kafka topic and sending the items to a server sent event
+	 */
+	@GET
+	@Produces(MediaType.SERVER_SENT_EVENTS) // Indicates that the content is sent using Server Sent Events
+	public Multi<Quote> stream() {
+		return quotes; //Return the stream (Reactive Stream)
 	}
 }
